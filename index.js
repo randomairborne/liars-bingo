@@ -15,14 +15,14 @@ function do_solve() {
     for (let i = 0; i < first.length; i++) {
         let bit = first[i];
         first_digit = first_digit << 1;
-        if (bit.toUpperCase() == 'R') {
+        if (bit.toUpperCase() == 'R' || bit == '1') {
             first_digit = first_digit | 1;
         }
     }
     for (let i = 0; i < second.length; i++) {
         let bit = second[i];
         second_digit = second_digit << 1;
-        if (bit.toUpperCase() == 'R') {
+        if (bit.toUpperCase() == 'R'  || bit == '1') {
             second_digit = second_digit | 1;
         }
     }
