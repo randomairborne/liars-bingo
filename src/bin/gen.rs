@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use Number::*;
 
 fn main() {
@@ -9,24 +11,26 @@ fn main() {
         let mut offset = 1;
         for item in row.values.iter_mut() {
             *item = if i & offset == 0 { Black(0) } else { Red(0) };
-            offset = offset << 1;
+            offset <<= 1;
         }
         rows.push(row);
     }
     for row in rows.iter_mut() {
-        let mut rcopy = row.clone();
+        let mut rcopy = *row;
         for (i, value) in row.values.iter_mut().enumerate() {
             rcopy.values[i] = -rcopy.values[i];
             value.set(rcopy.get_val());
             rcopy.values[i] = -rcopy.values[i];
         }
     }
+    rows.sort();
+    rows.reverse();
     for row in rows {
         println!("{row}");
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, PartialOrd, Ord)]
 pub struct Row {
     values: [Number; 6],
 }
@@ -37,15 +41,15 @@ impl Row {
         let mut ones = 0;
         let (pretens, preones) = self.values.split_at(3);
         for num in pretens {
-            tens = tens << 1;
+            tens <<= 1;
             if let Red(_val) = num {
-                tens = tens | 1;
+                tens |= 1;
             }
         }
         for num in preones {
-            ones = ones << 1;
+            ones <<= 1;
             if let Red(_val) = num {
-                ones = ones | 1;
+                ones |= 1;
             }
         }
         (tens * 10) + ones
@@ -64,6 +68,27 @@ impl Number {
             Red(o) => *o = v,
             Black(o) => *o = v,
         }
+    }
+}
+
+impl Ord for Number {
+    fn cmp(&self, other: &Self) -> Ordering {
+        match self {
+            Red(_) => match other {
+                Red(_) => Ordering::Equal,
+                Black(_) => Ordering::Less,
+            },
+            Black(_) => match other {
+                Red(_) => Ordering::Greater,
+                Black(_) => Ordering::Equal,
+            },
+        }
+    }
+}
+
+impl PartialOrd for Number {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
 

@@ -15,15 +15,15 @@ fn main() {
         let mut first_digit = 0;
         let mut second_digit = 0;
         for bit in first.chars() {
-            first_digit = first_digit << 1;
+            first_digit <<= 1;
             if bit.to_ascii_uppercase() == 'R' {
-                first_digit = first_digit | 1;
+                first_digit |= 1;
             }
         }
         for bit in second.chars() {
-            second_digit = second_digit << 1;
+            second_digit <<= 1;
             if bit.to_ascii_uppercase() == 'R' {
-                second_digit = second_digit | 1;
+                second_digit |= 1;
             }
         }
         println!("{}", (10 * first_digit) + second_digit);
